@@ -22,22 +22,7 @@
         android:paddingBottom="5dp">
 
         <!--Latitude-->
-        <TextView
-            android:id="@+id/lat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_weight="0.5"
-            android:text="" />
 
-        <!--Longitude-->
-        <TextView
-            android:id="@+id/lon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_weight="0.5"
-            android:text="" />
     </LinearLayout>
 
     <!--GoogleMap fragment-->

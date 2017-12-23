@@ -8,12 +8,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,27 +41,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.FileOutputStream;
-
-
 public class MainActivity extends AppCompatActivity
         implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener,
-        OnMapReadyCallback,
-        GoogleMap.OnMapClickListener,
-        GoogleMap.OnMarkerClickListener,
-        ResultCallback<Status> {
+            GoogleApiClient.ConnectionCallbacks,
+            GoogleApiClient.OnConnectionFailedListener,
+            LocationListener,
+            OnMapReadyCallback,
+            GoogleMap.OnMapClickListener,
+            GoogleMap.OnMarkerClickListener,
+            ResultCallback<Status> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private GoogleMap map;
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
-
-    private TextView textLat, textLong;
-
+    private LatLng x=new LatLng(44.4294571,26.0655353);
+    //private TextView textLat, textLong;
 
     private MapFragment mapFragment;
 
@@ -77,19 +73,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textLat = (TextView) findViewById(R.id.lat);
-        textLong = (TextView) findViewById(R.id.lon);
-
-
+      //  textLat = (TextView) findViewById(R.id.lat);
+       // textLong = (TextView) findViewById(R.id.lon);
 
         // initialize GoogleMaps
         initGMaps();
 
         // create GoogleApiClient
         createGoogleApi();
-
-
-
     }
 
     // Create GoogleApiClient instance
@@ -119,32 +110,6 @@ public class MainActivity extends AppCompatActivity
         // Disconnect GoogleApiClient when stopping Activity
         googleApiClient.disconnect();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.main_menu, menu );
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() ) {
-            case R.id.geofence: {
-                LatLng x=new LatLng(44.418187 , 26.086409);
-                markerForGeofence(x);
-                startGeofence();
-
-                return true;
-            }
-            case R.id.clear: {
-                clearGeofence();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private final int REQ_PERMISSION = 999;
 
     // Check for permission to access Location
@@ -196,7 +161,6 @@ public class MainActivity extends AppCompatActivity
     private void initGMaps(){
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     // Callback called when Map is ready
@@ -206,13 +170,13 @@ public class MainActivity extends AppCompatActivity
         map = googleMap;
         map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
-
+        startGeofence();
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
         Log.d(TAG, "onMapClick("+latLng +")");
-
+        markerForGeofence(x);
     }
 
     @Override
@@ -272,9 +236,6 @@ public class MainActivity extends AppCompatActivity
         if ( checkPermission() ) {
             lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if ( lastLocation != null ) {
-                Log.i(TAG, "LasKnown location. " +
-                        "Long: " + lastLocation.getLongitude() +
-                        " | Lat: " + lastLocation.getLatitude());
                 writeLastLocation();
                 startLocationUpdates();
             } else {
@@ -286,10 +247,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void writeActualLocation(Location location) {
-       // textLat.setText( "Lat: " + location.getLatitude() );
-       // textLong.setText( "Long: " + location.getLongitude() );
+     //   textLat.setText( "Lat: " + location.getLatitude() );
+     //   textLong.setText( "Long: " + location.getLongitude() );
 
-        markerLocation(new LatLng(location.getLatitude(),location.getLongitude()));
+        markerLocation(new LatLng(location.getLatitude(), location.getLongitude()));
     }
 
     private void writeLastLocation() {
@@ -337,7 +298,7 @@ public class MainActivity extends AppCompatActivity
     private void startGeofence() {
         Log.i(TAG, "startGeofence()");
         if( geoFenceMarker != null ) {
-            Geofence geofence = createGeofence( geoFenceMarker.getPosition(), GEOFENCE_RADIUS );
+            Geofence geofence = createGeofence( x, GEOFENCE_RADIUS );
             GeofencingRequest geofenceRequest = createGeofenceRequest( geofence );
             addGeofence( geofenceRequest );
         } else {
